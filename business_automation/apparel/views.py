@@ -1,6 +1,8 @@
+import datetime
 import random
 from decimal import Decimal
 
+from django.db.models.fields import DateTimeField
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from rest_framework import status, permissions
@@ -202,6 +204,21 @@ class GetPackByBarcode(APIView):
         serializer = PackSerializer(pack)
         return Response(serializer.data)
 
+class SoldApparel(APIView):
+    def post(self, request, barcode):
+        apparel = Apparel.objects.get(barcode=barcode)
+        apparel.date_sold = datetime.datetime.now()
+        apparel.save()
+        return Response({"status": "success", "data": apparel.date_sold}, status=status.HTTP_200_OK)
+
+
+
+class SoldPack(APIView):
+    def post(self, request, barcode):
+        pack = Pack.objects.get(barcode=barcode)
+        pack.date_sold = datetime.datetime.now()
+        pack.save()
+        return Response({"status": "success", "data": pack.date_sold}, status=status.HTTP_200_OK)
 
 
 #@api_view(['POST'])
